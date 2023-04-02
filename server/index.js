@@ -19,6 +19,10 @@ const balances = {
   "044698c76fc15f11667338f1b6559df7ad7c5596fd7c755eacbb94ab82ccfef97528e7809bd73a2e0413085b7780e4e3c5c7ee0c30e1e839372d921acb84127122": 100,
 };
 
+
+const cities = {};
+
+
 app.get("/balance/:address", (req, res) => {
   const { address } = req.params;
   const balance = balances[address] || 0;
@@ -43,6 +47,29 @@ app.post("/send", (req, res) => {
     res.send({ balance: balances[sender] });
   }
 });
+
+
+app.post("/claim-city", (req, res) => {
+  const { newCity: city, address, name } = req.body;
+  if (cities[address]) {
+    return res.status(400).send({ message: "You have already claimed a city" });
+  }
+  if (Object.values(cities).includes(city)) {
+    return res.status(400).send({ message: "City already claimed" });
+  }
+  cities[address] = { city, name };
+  res.send({ message: "City claimed successfully" });
+  console.log(`${city} was claimed by ${name} at address ${address}. This is cities now:`, cities);
+
+  balances[address] = 100;
+});
+
+
+
+app.get("/cities", (req, res) => {
+  res.send({ cities });
+});
+
 
 app.listen(port, () => {
   console.log(`Listening on port ${port}!`);
