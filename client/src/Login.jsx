@@ -8,100 +8,75 @@ import { Heading, Card, FormLabel, Button, Input } from "@chakra-ui/react"
 
 function Login({ address, setAddress, balance, setBalance, privateKey, setPrivateKey, name, setName, city, setCity, cities }) {
  
-  
-
-   // console.log(cities);
-
   const [seed, setSeed] = useState("");
   const [seed2, setSeed2] = useState("");
   
- 
-  
-  
-
-  
-    
-    async function generateKey(evt) {
-        event.preventDefault();
-        // const seed = evt.target.value;
-      // setSeed(seed);
+  async function generateKey(evt) {
+      evt.preventDefault();
+      
       const fullseed=seed+seed2+"a spoonfull of salt"
-      console.log(seed, seed2)
       const hdkey1 = await HDKey.fromMasterSeed(keccak256(utf8ToBytes(fullseed)));
-    
-       // console.log(hdkey1)
-
-       const privateKey = hdkey1.privKeyBytes;
-       setPrivateKey(privateKey);
-       const address = toHex(secp.getPublicKey(privateKey));
-       setAddress(address)
+      const privateKey = hdkey1.privKeyBytes;
+      setPrivateKey(privateKey);
+      
+      const address = toHex(secp.getPublicKey(privateKey));
+      setAddress(address)
        
  
-        if (address) {
-            const {
-                data: { balance },
-            } = await server.get(`balance/${address}`);
+      if (address) {
+          const {
+             data: { balance },
+          } = await server.get(`balance/${address}`);
             setBalance(balance);
             
-            console.log ("Cities: ", cities)
-  
                        
-            if (address in cities) {
+        if (address in cities) {
                   const { city , name } = cities[address];
                   console.log("Hi ",{name}, ", You live in", city);
                   setCity(city);
                   setName(name);
-                } else {
+                  } else {
                   console.log("No city found for this address");
-                }
+                  }
 
-        }   else {
-            setBalance(0);
-            // setCity("")
-       
-         
+        }  else {
+                  setBalance(0);         
         }    
-    }
-  // <div className="container wallet">  
+  }
+
   return (
    
     <Card
     className="container wallet"
     bg="rgba(42, 165, 168, 0.7)"
     maxW = "500px"
-    
-  >
+    >
   
       <Heading size="lg">Let's get started</Heading>
       
       <form >
       <FormLabel>
-    Pick a secret word. Shhhh!
-    <Input 
-      placeholder="Pick something you can remember and don't tell it to anyone!" 
-      value={seed} 
-      onChange={(e) => setSeed(e.target.value)}
-    />
+        Pick a secret word. Shhhh!
+        <Input 
+          placeholder="Pick something you can remember and don't tell it to anyone!" 
+          value={seed} 
+          onChange={(e) => setSeed(e.target.value)}
+        />
       </FormLabel>
 
       <FormLabel>
-    Pick another word (to make it harder to use a dictionary attack to guess your word)
-    <Input 
-      placeholder="Pick something you can remember and don't tell it to anyone!" 
-      value={seed2} 
-      onChange={(e) => setSeed2(e.target.value)}
-    />
+        Pick another word (to make it harder to use a dictionary attack to guess your word)
+        <Input 
+        placeholder="Pick something you can remember and don't tell it to anyone!" 
+        value={seed2} 
+        onChange={(e) => setSeed2(e.target.value)}
+        />
       </FormLabel>
 
-  <Button type="submit" onClick={generateKey}>Let's go!</Button>
-  </form>
-  </Card>
- 
-
-
-
-    
+      <Button type="submit" onClick={generateKey}>Let's go!</Button>
+      </form>
+    </Card> 
   );
-}
+};
 
 export default Login;

@@ -4,33 +4,51 @@ import * as secp from "ethereum-cryptography/secp256k1";
 import { keccak256 } from "ethereum-cryptography/keccak";
 import { utf8ToBytes } from "ethereum-cryptography/utils";
 import {toHex} from "ethereum-cryptography/utils"
-import  toUint8Array  from "ethereum-cryptography/utils";
 import { Heading, Card, FormLabel, Button, Input, Box, Image } from "@chakra-ui/react"
 import { Table, Thead, Tbody, Tr, Th, Td, TableContainer,} from '@chakra-ui/react'
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalCloseButton, ModalFooter } from "@chakra-ui/react"
 
 
 
-function Transfer({ address, setBalance, privateKey, cities, city, setRecipientImageUrl, recipientImageUrl, imageUrl,  }) {
+function Transfer({ setBalance, privateKey, cities, city, setRecipientImageUrl, recipientImageUrl, imageUrl,  }) {
   const [sendAmount, setSendAmount] = useState("");
   const [recipient, setRecipient] = useState("");
   const [recipientCity, setRecipientCity] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const [transferConfirmed, setTransferConfirmed] = useState(false);
+  const [transferCompleted, setTransferCompleted] = useState(false);
  
-
   const setValue = (setter) => (evt) => setter(evt.target.value);
   const setSearchQueryValue = (evt) => setSearchQuery(evt.target.value);
  
-  function filterCities() {
-    if (searchQuery) {
-      return Object.keys(cities).filter((address) =>
-        cities[address].city.toLowerCase().includes(searchQuery.toLowerCase()) || cities[address].name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    } else {
-      return Object.keys(cities);
+
+  async function transfer(evt) {
+    evt.preventDefault();
+    
+
+    const transaction = {
+      amount: parseInt(sendAmount),
+      recipient,
+      }
+    
+    transaction.hash = toHex(keccak256(utf8ToBytes(JSON.stringify(transaction))))
+    const signature = await secp.sign( transaction.hash , privateKey, {recovered: true });
+    const [sig, recovery] = signature;
+    transaction.signature = toHex(sig);
+    transaction.recovery = recovery;
+    
+
+    try {
+      const {
+        data: { balance },
+      } = await server.post(`send`, transaction);
+      setBalance(balance);
+      setTransferCompleted(true);
+    } catch (ex) {
+      alert(ex.response.data.message);
     }
+
+    
   }
 
   useEffect(() => {
@@ -45,71 +63,47 @@ function Transfer({ address, setBalance, privateKey, cities, city, setRecipientI
     }
     getImageUrl();
     
-   }, [recipient]);
+  }, [recipient]);
 
-   
-
-   async function newRecipient(recipient, city) {
-    await setRecipientCity(city);
-    await setRecipient(recipient);
-    await setTransferConfirmed(false);
-    
-   }
-
-  async function transfer(evt) {
-    evt.preventDefault();
-    
-
-  const transaction = {
-      amount: parseInt(sendAmount),
-      recipient,
-    }
-    transaction.message = 
-    transaction.hash = toHex(keccak256(utf8ToBytes(JSON.stringify(transaction))))
-    const signature = await secp.sign( transaction.hash , privateKey, {recovered: true });
-    const [sig, recovery] = signature;
-    transaction.signature = toHex(sig);
-    transaction.recovery = recovery;
-    
-
-    try {
-      const {
-        data: { balance },
-      } = await server.post(`send`, transaction);
-      setBalance(balance);
-      
-      setTransferConfirmed(true);
-    } catch (ex) {
-      alert(ex.response.data.message);
+    async function newRecipient(recipient, city) {
+      await setRecipientCity(city);
+      await setRecipient(recipient);
+      await setTransferCompleted(false);
     }
 
-    
-  }
+    function filterCities() {
+      if (searchQuery) {
+        return Object.keys(cities).filter((address) =>
+        cities[address].city.toLowerCase().includes(searchQuery.toLowerCase()) || cities[address].name.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+      } else {
+        return Object.keys(cities);
+      }
+    }
 
   function toggleModal() {
     setShowModal(!showModal);
   }
 
+  
   if (recipient){
   return (
     <Card
     className="container wallet"
     bg="rgba(42, 165, 168, 0.7)"
     maxW = "500px"
-    
-  >
-    
+    >
+      <Heading size="md">Sending to {recipientCity}   <Button onClick={() => newRecipient(null, null)}>Change recipient</Button></Heading>
       
-        <Heading size="md">Sending to {recipientCity}   <Button onClick={() => newRecipient(null, null)}>Change recipient</Button></Heading>
-      
-        <FormLabel> 
+      <FormLabel> 
           How many gold coins will you send?
-          <Input
+        <Input
             placeholder="1, 2, 3..."
             value={sendAmount}
             onChange={setValue(setSendAmount)}
-          ></Input>
-         </FormLabel>
+        ></Input>
+
+      </FormLabel>
   
       {/*
         <label>
@@ -123,15 +117,16 @@ function Transfer({ address, setBalance, privateKey, cities, city, setRecipientI
        */}
 
         
-        <form onSubmit={(evt) => { evt.preventDefault(); toggleModal(); }}>
-       <input type="submit" className="button" value="Transfer" />
+      <form onSubmit={(evt) => { evt.preventDefault(); toggleModal(); }}>
+      <input type="submit" className="button" value="Transfer" />
      
 
-       {showModal && (
-  <Modal isOpen={showModal} onClose={toggleModal}>
-    <ModalOverlay />
-    <ModalContent>
-      {!transferConfirmed ? (
+        {showModal && (
+        <Modal isOpen={showModal} onClose={toggleModal}>
+        <ModalOverlay />
+        <ModalContent>
+      
+        {!transferCompleted ? (
         <>
           <ModalHeader>Confirm transfer</ModalHeader>
           <ModalCloseButton />
@@ -151,7 +146,7 @@ function Transfer({ address, setBalance, privateKey, cities, city, setRecipientI
             <Button onClick={toggleModal}>Cancel</Button>
           </ModalFooter>
         </>
-      ) : (
+        ) : (
         <>
           <ModalHeader>Transaction complete!</ModalHeader>
           <ModalBody>
@@ -160,6 +155,7 @@ function Transfer({ address, setBalance, privateKey, cities, city, setRecipientI
                 autoPlay
                 muted
                 style={{ width: "100%", maxWidth: "400px" }}
+                onPlay={() => setTimeout(() => newRecipient(null, null), 2800)}
               >
                 <source src="../public/animation.webm" type="video/webm" />
               </video>
@@ -169,35 +165,35 @@ function Transfer({ address, setBalance, privateKey, cities, city, setRecipientI
             <Button onClick={() => newRecipient(null, null)}>Great!</Button>
           </ModalFooter>
         </>
-      )}
-    </ModalContent>
-  </Modal>
-)}
+        )}
+        </ModalContent>
+        </Modal>
+        )}
 
 
-         </form>
-         
-        </Card>
+      </form>
+    </Card>
   );
-  } else { 
-
-    return (
-     
-      <Card
+  
+} else { 
+  return (
+    
+    <Card
       className="container wallet"
       bg="rgba(42, 165, 168, 0.7)"
       maxW = "500px"
-      
     >
        <Heading size="md">Transfer gold coins </Heading>
-        <label>
+        <FormLabel>
           Search by city or name:
-          <input
+          <Input
             type="text"
+            backgroundColor="white"
+            opacity="0.5"
             value={searchQuery}
             onChange={setSearchQueryValue}
           />
-        </label>
+        </FormLabel>
       
       <TableContainer 
       height="50vh" // set a maximum height

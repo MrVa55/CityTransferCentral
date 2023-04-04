@@ -1,31 +1,15 @@
 import server from "./server";
-import * as secp from "ethereum-cryptography/secp256k1";
-import {toHex, utf8ToBytes} from "ethereum-cryptography/utils"
-import { HDKey } from "ethereum-cryptography/hdkey";
 import { useState, useEffect } from "react";
-import { keccak256 } from "ethereum-cryptography/keccak";
-import { Heading, Card, Box, Button, FormControl, FormLabel, FormErrorIcon, FormErrorMessage, Input } from "@chakra-ui/react"
+import { Heading, Card, Box, Button, FormControl, FormLabel, FormErrorMessage, Input } from "@chakra-ui/react"
 
-function ClaimCity({ address, setAddress, balance, setBalance, privateKey, setPrivateKey, name, setName, city, setCity }) {
-  const [imageUrl, setImageUrl] = useState(null);
+function ClaimCity({ address, name, setName, setCity }) {
   const [newCity, setNewCity] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   
 
-  async function handleNameChange (evt) {
-    const name = evt.target.value;
-    setName(name)
-  }
-
-  async function handleCityChange (evt) {
-    const newCity = evt.target.value;
-    setNewCity(newCity)
-  }
- 
   async function claimCity(evt) {
     evt.preventDefault();
-    //console.log("Claim city by ", name)
-    //console.log("New City:", newCity, "City: ", city)
+   
   try {
     await server.post("claim-city", { newCity, address, name });
     setCity(newCity)
@@ -39,7 +23,16 @@ function ClaimCity({ address, setAddress, balance, setBalance, privateKey, setPr
     }
   }
   
-   
+  async function handleNameChange (evt) {
+    const name = evt.target.value;
+    setName(name)
+  }
+
+  async function handleCityChange (evt) {
+    const newCity = evt.target.value;
+    setNewCity(newCity)
+  }
+  
   return (
     <Card className="container wallet" bg="rgba(42, 165, 168, 0.7)" maxW="500px">
       <Heading>Where do you want your address?</Heading>

@@ -1,28 +1,23 @@
 import server from "./server";
-import * as secp from "ethereum-cryptography/secp256k1";
-import {toHex, utf8ToBytes} from "ethereum-cryptography/utils"
-import { HDKey } from "ethereum-cryptography/hdkey";
 import { useState, useEffect } from "react";
-import { keccak256 } from "ethereum-cryptography/keccak";
 import { Heading, Card, Flex, Box, Image, FormLabel, Button, Input } from "@chakra-ui/react"
 
-function Sender({ address, setAddress, balance, setBalance, privateKey, setPrivateKey, name, setName, city, setCity, setImageUrl }) {
-  
-  const [newCity, setNewCity] = useState(null);
+function Sender({ address, setAddress, balance, setBalance, setPrivateKey, name, setName, city, setCity, setImageUrl }) {
 
-useEffect(() => {
-  async function getBalances() {
-  if (address) {
-    const {
-      data: { balance },
-    } = await server.get(`balance/${address}`);
+
+  useEffect(() => {
+   async function getBalances() {
+    if (address) {
+      const {
+        data: { balance },
+      } = await server.get(`balance/${address}`);
     setBalance(balance);
-  } else {
+    } else {
     setBalance(0);
-  }
-  }
+    }
+    }
   getBalances();
-}, []);
+  }, []);
 
   useEffect(() => {
     async function getImageUrl() {
@@ -36,7 +31,7 @@ useEffect(() => {
     }
     getImageUrl();
     
-   }, []);
+  }, []);
 
   function logOut () {
     setPrivateKey("");
@@ -45,35 +40,27 @@ useEffect(() => {
     setCity("");
   } 
   
-/*
-   
-
- 
-
-  */
-  
   return (
     <Card
     className="container wallet"
     bg="rgba(42, 165, 168, 0.7)"
     maxW = "500px"
+    >  
+      <Heading size="lg">Hello {name}, Welcome to {city}!</Heading>
     
-  >
-  
-   
-    <Heading size="lg">Hello {name}, Welcome to {city}!</Heading>
-    
-
-    <Card 
-    p="3"
-    m="3"
-    bg="rgba(37, 104, 128, 0.7)"><Heading size="sm">Coffers of {city} contain:</Heading>
-    <Flex alignItems="center" direction="row">
-  <Image maxW="150px" src="/coffer.png" />
-  <Box ml={4} color="gold" fontWeight="bold">{balance} gold coins</Box>
-</Flex></Card>
-
-    <Button onClick={logOut}>Leave {city}</Button>
+      <Card 
+      p="3"
+      m="3"
+      bg="rgba(37, 104, 128, 0.7)">
+      
+        <Heading size="sm">Coffers of {city} contain:</Heading>
+        <Flex alignItems="center" direction="row">
+          <Image maxW="150px" src="/coffer.png" />
+          <Box ml={4} color="gold" fontWeight="bold">{balance} gold coins</Box>
+        </Flex>
+      
+      </Card>
+      <Button onClick={logOut}>Leave {city}</Button>
    
     </Card>
     

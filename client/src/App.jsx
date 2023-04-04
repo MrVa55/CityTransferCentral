@@ -4,14 +4,10 @@ import Login from "./Login";
 import Sender from "./Sender";
 import ClaimCity from "./ClaimCity";
 import "./App.scss";
-import { useState, useEffect } from "react";
 import * as React from 'react'
+import { useState, useEffect } from "react";
 import { ChakraProvider } from '@chakra-ui/react'
 import { Box, Flex } from "@chakra-ui/react";
-
-
-    
-
 
 function App() {
   const [balance, setBalance] = useState(0);
@@ -23,11 +19,7 @@ function App() {
   const [imageUrl, setImageUrl] = useState(null);
   const [recipientImageUrl, setRecipientImageUrl] = useState(null);
 
-  useEffect(() => {
-    console.log(privateKey)
-     }, [privateKey]);
-
-  useEffect(() => {
+ useEffect(() => {
       async function loadCities() {
         const response = await server.get('cities');
         const loadedCities = response.data.cities;
@@ -46,7 +38,6 @@ function App() {
         backgroundPosition="center center"
         backgroundSize="100vw 100vh"
         height="100vh"
-       // margin="0"
       >
        
         {privateKey && city ? (
@@ -56,12 +47,12 @@ function App() {
             <Box w="52%"
             backgroundImage={imageUrl}
              >
+            
             <Flex justifyContent="center" alignItems="center" height="100%">
             <Sender
               balance={balance}
               setBalance={setBalance}
               address={address}
-              privateKey={privateKey}
               setPrivateKey={setPrivateKey}
               setAddress={setAddress}
               name={name}
@@ -78,7 +69,6 @@ function App() {
             <Flex justifyContent="center" alignItems="center" height="100%">
             <Transfer
               setBalance={setBalance}
-              address={address}
               privateKey={privateKey}
               cities={cities}
               city={city}
@@ -94,29 +84,19 @@ function App() {
         ) : privateKey ? (
           <Flex justifyContent="center" alignItems="center" height="100%">
           <ClaimCity
-            balance={balance}
-            setBalance={setBalance}
             address={address}
-            privateKey={privateKey}
-            setPrivateKey={setPrivateKey}
-            setAddress={setAddress}
             name={name}
             setName={setName}
-            city={city}
             setCity={setCity}
           />
            </Flex>
         ) : (
           <Flex justifyContent="center" alignItems="center" height="100%">
           <Login
-            balance={balance}
             setBalance={setBalance}
-            address={address}
-            privateKey={privateKey}
             setPrivateKey={setPrivateKey}
             setAddress={setAddress}
             setName={setName}
-            city={city}
             setCity={setCity}
             cities={cities}
           />
