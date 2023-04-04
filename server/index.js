@@ -3,6 +3,7 @@ const app = express();
 const cors = require("cors");
 const port = 3042;
 const { toHex } = require("ethereum-cryptography/utils");
+// const validCity = require("./validCity.js");
 
 const secp = require("ethereum-cryptography/secp256k1");
 // const { utf8ToBytes } = require("ethereum-cryptography/utils");
@@ -21,6 +22,19 @@ const balances = {
 
 
 const cities = {};
+
+async function validCity(city) {
+  const fetch = require('isomorphic-fetch');
+  const apiKey = '2b915a4b291f45a59554ceeab0ca67a3';
+  const response = await fetch(`https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(city)}&key=${apiKey}`);
+  const data = await response.json();
+  console.log(data)
+  if (data.total_results > 0) {
+    return true;
+  } else {
+    return false;
+  }
+}
 
 
 app.get("/balance/:address", (req, res) => {
@@ -49,19 +63,28 @@ app.post("/send", (req, res) => {
 });
 
 
-app.post("/claim-city", (req, res) => {
+app.post("/claim-city", async (req, res) => {
   const { newCity: city, address, name } = req.body;
   if (cities[address]) {
     return res.status(400).send({ message: "You have already claimed a city" });
   }
-  if (Object.values(cities).includes(city)) {
+  const cityAlreadyClaimed = Object.values(cities).find(c => c.city === city);
+  const cityIsValid = await validCity(city);
+  console.log(city, "is valid: ", cityIsValid )
+  if (cityAlreadyClaimed) {
     return res.status(400).send({ message: "City already claimed" });
   }
+ if (!cityIsValid) {
+    return res.status(400).send({ message: "That's not a city! Please pick a real place" });
+    console.log("${city} is not a valid city");
+  }
+  else {
   cities[address] = { city, name };
   res.send({ message: "City claimed successfully" });
   console.log(`${city} was claimed by ${name} at address ${address}. This is cities now:`, cities);
 
   balances[address] = 100;
+  }
 });
 
 

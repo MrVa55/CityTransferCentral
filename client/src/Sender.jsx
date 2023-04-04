@@ -4,9 +4,10 @@ import {toHex, utf8ToBytes} from "ethereum-cryptography/utils"
 import { HDKey } from "ethereum-cryptography/hdkey";
 import { useState, useEffect } from "react";
 import { keccak256 } from "ethereum-cryptography/keccak";
+import { Heading, Card, Flex, Box, Image, FormLabel, Button, Input } from "@chakra-ui/react"
 
-function Sender({ address, setAddress, balance, setBalance, privateKey, setPrivateKey, name, setName, city, setCity }) {
-  const [imageUrl, setImageUrl] = useState(null);
+function Sender({ address, setAddress, balance, setBalance, privateKey, setPrivateKey, name, setName, city, setCity, setImageUrl }) {
+  
   const [newCity, setNewCity] = useState(null);
 
 useEffect(() => {
@@ -52,19 +53,29 @@ useEffect(() => {
   */
   
   return (
-    <div className="container wallet">
+    <Card
+    className="container wallet"
+    bg="rgba(42, 165, 168, 0.7)"
+    maxW = "500px"
+    
+  >
   
    
-    <h1>Hello {name}, Welcome to {city}!</h1>
-    {imageUrl && <img src={imageUrl} alt={city} height="400px" />}
+    <Heading size="lg">Hello {name}, Welcome to {city}!</Heading>
+    
 
-    <div className="balance">Balance: {balance}</div>
+    <Card 
+    p="3"
+    m="3"
+    bg="rgba(37, 104, 128, 0.7)"><Heading size="sm">Coffers of {city} contain:</Heading>
+    <Flex alignItems="center" direction="row">
+  <Image maxW="150px" src="/coffer.png" />
+  <Box ml={4} color="gold" fontWeight="bold">{balance} gold coins</Box>
+</Flex></Card>
 
-    <div>Address: {address.slice(0,20)}...</div>
-
-    <button onClick={logOut}>Log out</button>
-    </div>
-
+    <Button onClick={logOut}>Leave {city}</Button>
+   
+    </Card>
     
   );
 }

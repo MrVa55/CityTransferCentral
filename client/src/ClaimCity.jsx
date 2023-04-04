@@ -4,10 +4,12 @@ import {toHex, utf8ToBytes} from "ethereum-cryptography/utils"
 import { HDKey } from "ethereum-cryptography/hdkey";
 import { useState, useEffect } from "react";
 import { keccak256 } from "ethereum-cryptography/keccak";
+import { Heading, Card, Box, Button, FormControl, FormLabel, FormErrorIcon, FormErrorMessage, Input } from "@chakra-ui/react"
 
 function ClaimCity({ address, setAddress, balance, setBalance, privateKey, setPrivateKey, name, setName, city, setCity }) {
   const [imageUrl, setImageUrl] = useState(null);
   const [newCity, setNewCity] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
   
 
   async function handleNameChange (evt) {
@@ -21,47 +23,48 @@ function ClaimCity({ address, setAddress, balance, setBalance, privateKey, setPr
   }
  
   async function claimCity(evt) {
-    event.preventDefault();
+    evt.preventDefault();
     //console.log("Claim city by ", name)
     //console.log("New City:", newCity, "City: ", city)
   try {
     await server.post("claim-city", { newCity, address, name });
-    } catch (error){console.log(error)}
-    setCity(newCity);
+    setCity(newCity)
+    setErrorMsg("");
+    } catch (error) {
+      if (error.response.data.message) {
+        setErrorMsg(error.response.data.message);
+      } else {
+        setErrorMsg(error.message);
+      }
+    }
   }
-
+  
    
   return (
-   
- <div className="container wallet">
- <h1>Where do you want your address?</h1>
-
- <h4>CityTransfer Central-ECDSA uses a city as your public address. Pick one. 
- </h4>
- 
- <label>
-   What is your name?
-   <input placeholder="What do you like to be called?" value={name} onChange={handleNameChange}></input>
- </label>
-
- 
- <form onSubmit={claimCity}>
-   <label>
-   Pick a city where you will receive funds
-   <input type="text" placeholder="Name of City" value={newCity} onChange={handleCityChange}/>
-   </label>
-   <button type="submit">Claim Your City</button>
- </form>
-
-
-        
-     
-
-
-    </div>
-
-    
+    <Card className="container wallet" bg="rgba(42, 165, 168, 0.7)" maxW="500px">
+      <Heading>Where do you want your address?</Heading>
+      <h4>CityTransfer Central-ECDSA uses a city as your public address. Pick one. </h4>
+      <FormLabel>
+        What is your name?
+        <Input placeholder="What do you like to be called?" value={name} onChange={handleNameChange} />
+        </FormLabel>
+      <FormControl isInvalid={errorMsg}>
+        <form onSubmit={claimCity}>
+        <FormLabel>
+          Pick a city where you will receive funds
+          <Input type="text" placeholder="Name of City" value={newCity} onChange={handleCityChange} />
+          </FormLabel>
+        {errorMsg ? (
+          <Box p="1">
+            <FormErrorMessage>{errorMsg}</FormErrorMessage>
+          </Box>
+        ) : null}
+        <Button type="submit">Claim Your City</Button>
+      </form>
+      </FormControl>
+    </Card>
   );
+  
 }
 
 export default ClaimCity;
