@@ -3,9 +3,9 @@ import server from "./server";
 import * as secp from "ethereum-cryptography/secp256k1";
 import { keccak256 } from "ethereum-cryptography/keccak";
 import { utf8ToBytes } from "ethereum-cryptography/utils";
-import {toHex} from "ethereum-cryptography/utils"
-import { Heading, Card, FormLabel, Button, Input, Box, Image } from "@chakra-ui/react"
-import { Table, Thead, Tbody, Tr, Th, Td, TableContainer,} from '@chakra-ui/react'
+import {toHex} from "ethereum-cryptography/utils";
+import { Heading, Card, FormLabel, Button, Input, Box, Image } from "@chakra-ui/react";
+import { Table, Thead, Tbody, Tr, Th, Td, TableContainer,} from '@chakra-ui/react';
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalCloseButton, ModalFooter } from "@chakra-ui/react"
 
 
@@ -38,7 +38,22 @@ function Transfer({ setBalance, privateKey, cities, city, setRecipientImageUrl, 
     transaction.signature = toHex(sig);
     transaction.recovery = recovery;
     
+      
+    try {
+      const {
+        data: { balance },
+      } = await server.post(`send`, transaction);
+      
+    
+      setBalance(balance);
+      setTransferCompleted(true);
+    } catch (ex) {
+      alert(ex.response.data.message);
+    }
+    
 
+    // Uncomment for a replay attack:
+    /*
     try {
       const {
         data: { balance },
@@ -49,13 +64,23 @@ function Transfer({ setBalance, privateKey, cities, city, setRecipientImageUrl, 
     } catch (ex) {
       alert(ex.response.data.message);
     }
+    */
 
-    // Uncomment for a replay attack:
-    /*
+     // Uncomment for a tampered transcation:
+     /*
+     const faketransaction = {
+      amount: parseInt("50"),
+      recipient: "04ff961e22fde6290a628e44228e17673cf4bb348a2f33174f29490a879f7f762a7d73b4ec8af73942f90d1004e671722cb00660f97cb6553a4c80d0f28cdbdebf",
+      timestamp: Date.now(), // Add timestamp to prevent against replay attacks 
+      }
+      faketransaction.hash = transaction.hash;
+      faketransaction.signature = transaction.signature;
+      faketransaction.recovery = transaction.recovery 
+    
     try {
       const {
         data: { balance },
-      } = await server.post(`send`, transaction);
+      } = await server.post(`send`, faketransaction);
       
       setBalance(balance);
       setTransferCompleted(true);

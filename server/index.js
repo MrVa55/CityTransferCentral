@@ -2,12 +2,13 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const port = 3042;
-const { toHex } = require("ethereum-cryptography/utils");
 
 const validCity = require("./validCity.js");
 
 const secp = require("ethereum-cryptography/secp256k1");
-
+const { keccak256 } = require("ethereum-cryptography/keccak");
+const { utf8ToBytes } = require ("ethereum-cryptography/utils");
+const {toHex} = require ("ethereum-cryptography/utils");
 
 app.use(cors());
 app.use(express.json());
@@ -26,6 +27,18 @@ app.get("/balance/:address", (req, res) => {
 app.post("/send", (req, res) => {
  
   const { signature, recovery, hash, recipient, amount, timestamp } = req.body;
+  
+  // Verify that message has not been tampered with in transit
+  
+  const receivedtransaction = { amount, recipient, timestamp } 
+   receivedtransaction.hash = toHex(keccak256(utf8ToBytes(JSON.stringify(receivedtransaction))))
+    
+    if (hash !== receivedtransaction.hash) {
+    return res.status(400).send({ message: "Invalid Transaction. Data lost in transit" }); 
+    }
+  
+
+  // Recover public key
   const pubKey = secp.recoverPublicKey(hash, signature, recovery);
   const sender = toHex(pubKey) 
 
@@ -47,7 +60,7 @@ app.post("/send", (req, res) => {
   } else {
   timestamps[sender] =  [ timestamp ];
   }
-  console.log(timestamps)
+
 
   // delete timestamp after 2 minutes
   function deleteTimestamp(address, timestamp) {
@@ -60,6 +73,7 @@ app.post("/send", (req, res) => {
   }
   setTimeout(() => deleteTimestamp(sender, timestamp), 120000)
 
+  
 
 
   setInitialBalance(sender);
@@ -91,7 +105,7 @@ app.post("/claim-city", async (req, res) => {
   else {
   cities[address] = { city, name };
   res.send({ message: "City claimed successfully" });
-  console.log(`${city} was claimed by ${name} at address ${address}. This is cities now:`, cities);
+  console.log(`${city} was claimed by ${name} at address ${address}`);
 
   balances[address] = 100;
   }
