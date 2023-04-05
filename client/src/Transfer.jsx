@@ -135,7 +135,7 @@ function Transfer({ setBalance, privateKey, cities, city, setRecipientImageUrl, 
     bg="rgba(42, 165, 168, 0.7)"
     maxW = "500px"
     >
-      <Heading size="md">Sending to {recipientCity}   <Button onClick={() => newRecipient(null, null)}>Change recipient</Button></Heading>
+      <Heading size="md">Sending to {recipientCity}   <Button onClick={() => newRecipient(null, null)} textColor="black">Change recipient</Button></Heading>
       
       <FormLabel> 
           How many gold coins will you send?
