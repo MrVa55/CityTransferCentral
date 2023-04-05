@@ -1,5 +1,6 @@
 import server from "./server";
 import Transfer from "./Transfer";
+import Intro from "./Intro";
 import Login from "./Login";
 import Sender from "./Sender";
 import ClaimCity from "./ClaimCity";
@@ -8,6 +9,31 @@ import * as React from 'react'
 import { useState, useEffect } from "react";
 import { ChakraProvider } from '@chakra-ui/react'
 import { Box, Flex } from "@chakra-ui/react";
+import { extendTheme } from "@chakra-ui/react"
+
+
+// Define custom theme
+const customTheme = extendTheme({
+  components: {
+    Text: {
+      baseStyle: {
+        color: "white",
+        fontSize: "sm",
+      },},
+    Heading: {
+      baseStyle: {
+        color: "white",
+      }
+    },
+    FormLabel: {
+      baseStyle: {
+        color: "white",
+      }
+    },
+  },
+ })
+  
+
 
 function App() {
   const [balance, setBalance] = useState(0);
@@ -30,7 +56,7 @@ function App() {
 
   
   return (
-    <ChakraProvider>
+    <ChakraProvider theme={customTheme}>
       <Box
         backgroundImage="/two_cities.png"
         backgroundRepeat="no-repeat"
@@ -91,6 +117,7 @@ function App() {
            </Flex>
         ) : (
           <Flex justifyContent="center" alignItems="center" height="100%">
+          <Intro />
           <Login
             setBalance={setBalance}
             setPrivateKey={setPrivateKey}

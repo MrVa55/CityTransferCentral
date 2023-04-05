@@ -110,6 +110,7 @@ function Transfer({ setBalance, privateKey, cities, city, setRecipientImageUrl, 
       await setRecipient(recipient);
       await setTransferCompleted(false);
       await setSendAmount("");
+      await setShowModal(false);
     }
 
     function filterCities() {

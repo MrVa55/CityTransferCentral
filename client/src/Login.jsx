@@ -32,12 +32,9 @@ function Login({ address, setAddress, balance, setBalance, privateKey, setPrivat
                        
         if (address in cities) {
                   const { city , name } = cities[address];
-                  console.log("Hi ",{name}, ", You live in", city);
                   setCity(city);
                   setName(name);
-                  } else {
-                  console.log("No city found for this address");
-                  }
+                  } 
 
         }  else {
                   setBalance(0);         
