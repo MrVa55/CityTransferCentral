@@ -23,7 +23,6 @@ function App() {
       async function loadCities() {
         const response = await server.get('cities');
         const loadedCities = response.data.cities;
-        console.log(JSON.stringify(loadedCities));
         setCities(loadedCities);
       }
       loadCities();

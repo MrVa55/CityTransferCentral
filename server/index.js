@@ -15,6 +15,7 @@ app.use(express.json());
 
 const balances = {};
 const cities = {};
+const timestamps = {};
 
 app.get("/balance/:address", (req, res) => {
   const { address } = req.params;
@@ -24,9 +25,42 @@ app.get("/balance/:address", (req, res) => {
 
 app.post("/send", (req, res) => {
  
-  const { signature, recovery, hash, recipient, amount } = req.body;
+  const { signature, recovery, hash, recipient, amount, timestamp } = req.body;
   const pubKey = secp.recoverPublicKey(hash, signature, recovery);
   const sender = toHex(pubKey) 
+
+  // Check if timestamp is within last 2 minutes
+  if (timestamp - Date.now() > 2 * 60 * 1000) {
+    return res.status(400).send({ message: "Transaction expired. Time limit 2 minutes" });
+  }
+  
+  // check for replay
+  if (timestamps[sender]) {
+    const index = timestamps[sender].indexOf(timestamp);
+    if (index !== -1) {
+      return res.status(400).send({ message: "Transaction already went through. Create new transaction" });
+    } else {
+  
+    // add timestamp to recent timestamps
+    timestamps[sender].push(timestamp);
+    }
+  } else {
+  timestamps[sender] =  [ timestamp ];
+  }
+  console.log(timestamps)
+
+  // delete timestamp after 2 minutes
+  function deleteTimestamp(address, timestamp) {
+    if (timestamps[address]) {
+      const index = timestamps[address].indexOf(timestamp);
+      if (index !== -1) {
+        timestamps[address].splice(index, 1);
+      }
+    }
+  }
+  setTimeout(() => deleteTimestamp(sender, timestamp), 120000)
+
+
 
   setInitialBalance(sender);
   setInitialBalance(recipient);
@@ -46,7 +80,7 @@ app.post("/claim-city", async (req, res) => {
   if (cities[address]) {
     return res.status(400).send({ message: "You have already claimed a city" });
   }
-  const cityAlreadyClaimed = Object.values(cities).find(c => c.city.toLowercase === city.toLowercase);
+  const cityAlreadyClaimed = Object.values(cities).find(c => c.city.toLowerCase() === city.toLowerCase());
   const cityIsValid = await validCity(city);
   if (cityAlreadyClaimed) {
     return res.status(400).send({ message: "City already claimed" });

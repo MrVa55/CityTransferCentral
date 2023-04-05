@@ -29,6 +29,7 @@ function Transfer({ setBalance, privateKey, cities, city, setRecipientImageUrl, 
     const transaction = {
       amount: parseInt(sendAmount),
       recipient,
+      timestamp: Date.now(), // Add timestamp to prevent against replay attacks 
       }
     
     transaction.hash = toHex(keccak256(utf8ToBytes(JSON.stringify(transaction))))
@@ -42,12 +43,26 @@ function Transfer({ setBalance, privateKey, cities, city, setRecipientImageUrl, 
       const {
         data: { balance },
       } = await server.post(`send`, transaction);
+      
       setBalance(balance);
       setTransferCompleted(true);
     } catch (ex) {
       alert(ex.response.data.message);
     }
 
+    // Uncomment for a replay attack:
+    /*
+    try {
+      const {
+        data: { balance },
+      } = await server.post(`send`, transaction);
+      
+      setBalance(balance);
+      setTransferCompleted(true);
+    } catch (ex) {
+      alert(ex.response.data.message);
+    }
+    */
     
   }
 
@@ -69,6 +84,7 @@ function Transfer({ setBalance, privateKey, cities, city, setRecipientImageUrl, 
       await setRecipientCity(city);
       await setRecipient(recipient);
       await setTransferCompleted(false);
+      await setSendAmount("");
     }
 
     function filterCities() {
