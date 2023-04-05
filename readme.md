@@ -1,31 +1,17 @@
-## ECDSA Node
+Welcome to CityTransfer CENTRAL w/ ECDSA
+CityTransfer CENTRAL is a week 1 project at Alchemy University.
 
-This project is an example of using a client and server to facilitate transfers between different addresses. Since there is just a single server on the back-end handling transfers, this is clearly very centralized. We won't worry about distributed consensus for this project.
 
-However, something that we would like to incoporate is Public Key Cryptography. By using Elliptic Curve Digital Signatures we can make it so the server only allows transfers that have been signed for by the person who owns the associated address.
+The project demonstrates the use of public key cryptography through ECDSA (Elliptic Curve Digital Signature Algorithm).
 
-### Video instructions
-For an overview of this project as well as getting started instructions, check out the following video:
 
-https://www.loom.com/share/0d3c74890b8e44a5918c4cacb3f646c4
- 
-### Client
+In this project private keys are generated from 2 seed secret seed words and city names are used as public addresses allowing users to travel the globe. It securely identifies the sender of "gold coin" transactions without transferring the private key and protects against tampering and replay attacks.
 
-The client folder contains a [react app](https://reactjs.org/) using [vite](https://vitejs.dev/). To get started, follow these steps:
 
-1. Open up a terminal in the `/client` folder
-2. Run `npm install` to install all the depedencies
-3. Run `npm run dev` to start the application 
-4. Now you should be able to visit the app at http://127.0.0.1:5173/
+The team behind CityTransfer CENTRAL are aware that the number of cities in the world could be a bottleneck to adaptation, but as a school project such growth can not be anticipated in the near future.
 
-### Server
 
-The server folder contains a node.js server using [express](https://expressjs.com/). To run the server, follow these steps:
+Instead, using cities as public addresses gives rise to a fun globetrotter game. Because all cities start with 100 gold coins and can only be claimed once, there is an incentive for users to claim new cities first and transfer the funds to their HQ.
 
-1. Open a terminal within the `/server` folder 
-2. Run `npm install` to install all the depedencies 
-3. Run `node index` to start the server 
 
-The application should connect to the default server port (3042) automatically! 
-
-_Hint_ - Use [nodemon](https://www.npmjs.com/package/nodemon) instead of `node` to automatically restart the server on any changes.
+Try it out and have fun!
