@@ -8,7 +8,6 @@
     "build": "vite build",
     "preview": "vite preview",
     "start": "serve -s dist"
-    },
   },
   "dependencies": {
     "@chakra-ui/react": "^2.5.5",
