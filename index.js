@@ -118,7 +118,7 @@ app.get("/cities", (req, res) => {
 
 
 app.listen(port, () => {
-  console.log(`Listening on port ${port}!`);
+  console.log(`I am listening on port ${port}!`);
 });
 
 function setInitialBalance(address) {
