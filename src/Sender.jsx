@@ -55,8 +55,8 @@ function Sender({ address, setAddress, balance, setBalance, setPrivateKey, name,
       
         <Heading size="sm">Coffers of {city} contain:</Heading>
         <Flex alignItems="center" direction="row">
-          <Image maxW="150px" src="/coffer.png" />
-          <Box ml={4} color="gold" fontWeight="bold">{balance} gold coins</Box>
+          <Image maxW="50%" src="/coffer.png" />
+          <Box maxW="50%" ml={4} color="gold" fontWeight="bold">{balance} gold coins</Box>
         </Flex>
       
       </Card>

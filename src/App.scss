@@ -6,6 +6,9 @@ body {
     padding: 0px;
   }
 */ 
+html, body {
+  background-color: #3A293A;
+}
   
   label {
     display: flex;
@@ -28,7 +31,7 @@ body {
   
   .container {
     flex-grow: 1;
-    margin: 0 20px;
+    margin: 10px 20px;
     background-color: #fff;
     border: 1px solid #cbd5e0;
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);

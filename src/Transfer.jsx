@@ -11,6 +11,7 @@ import Lottie from "lottie-react";
 import animationData from './success.json';
 
 
+
 function Transfer({ setBalance, privateKey, cities, city, setRecipientImageUrl, recipientImageUrl, imageUrl,  }) {
   const [sendAmount, setSendAmount] = useState("");
   const [recipient, setRecipient] = useState("");
@@ -225,6 +226,7 @@ function Transfer({ setBalance, privateKey, cities, city, setRecipientImageUrl, 
     
     <Card
       className="container wallet"
+      p = {{ base: "10px", md: "40px"}}
       bg="rgba(42, 165, 168, 0.7)"
       maxW = "500px"
     >
@@ -233,8 +235,7 @@ function Transfer({ setBalance, privateKey, cities, city, setRecipientImageUrl, 
           Search by city or name:
           <Input
             type="text"
-            backgroundColor="white"
-            opacity="0.5"
+            backgroundColor="rgba(255, 255, 255, 0.5)"
             value={searchQuery}
             onChange={setSearchQueryValue}
           />
@@ -243,7 +244,7 @@ function Transfer({ setBalance, privateKey, cities, city, setRecipientImageUrl, 
       <TableContainer 
       height="50vh" // set a maximum height
       overflowY="auto"> 
-      <Table size="Sm">
+      <Table size="sm">
         <Thead>
           <Tr>
             <Th>Name</Th>
@@ -255,10 +256,11 @@ function Transfer({ setBalance, privateKey, cities, city, setRecipientImageUrl, 
             const { city, name } = cities[address];
             return (
               <Tr key={address}>
-                <Td>{name}</Td>
-                <Td>{city}</Td>
-                <Td>
-                  <Button size="sm" value={address} onClick={() => newRecipient(address, city)}>
+               
+                <Td  p={{ base: 1 }}  maxW="40%" fontSize="sm" whiteSpace="normal" text-overflow="ellipsis" overflow="hidden">{name}</Td>
+                <Td  p={{ base: 1 }}  maxW="40%" fontSize="sm" whiteSpace="normal" text-overflow="ellipsis" overflow="hidden">{city}</Td>
+                <Td  fontSize="sm" whiteSpace="nowrap">
+                  <Button size="sm"  maxW="100px" value={address} onClick={() => newRecipient(address, city)}>
                     Send here
                   </Button>
                 </Td>

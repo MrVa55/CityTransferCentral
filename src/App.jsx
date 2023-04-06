@@ -57,6 +57,7 @@ function App() {
   
   return (
     <ChakraProvider theme={customTheme}>
+     <Box   bg="rgba(58, 42, 58)" minHeight="auto">
       <Box
         backgroundImage="/two_cities.png"
         backgroundRepeat="no-repeat"
@@ -68,7 +69,7 @@ function App() {
         {privateKey && city ? (
           <>
           <Flex direction={{ base: "column", md: "row" }} width="100%" height="100%">
-            <Box w={{ base: '100%', md: '52%' }} backgroundImage={imageUrl}>
+            <Box w={{ base: '100%', md: '52%' }} backgroundImage={imageUrl} backgroundSize="cover">
             
             <Flex justifyContent="center" alignItems="center" height="100%">
             <Sender
@@ -86,7 +87,7 @@ function App() {
             />
             </Flex>
             </Box>
-            <Box w={{ base: '100%', md: '48%' }} backgroundImage={recipientImageUrl}>
+            <Box w={{ base: '100%', md: '48%' }} backgroundImage={recipientImageUrl} backgroundSize="cover">
             <Flex justifyContent="center" alignItems="center" height="100%">
             <Transfer
               setBalance={setBalance}
@@ -126,6 +127,7 @@ function App() {
            </Flex>
         )}
      
+      </Box>
       </Box>
     </ChakraProvider>
   );
