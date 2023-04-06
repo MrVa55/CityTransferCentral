@@ -7,7 +7,8 @@ import {toHex} from "ethereum-cryptography/utils";
 import { Heading, Card, FormLabel, Button, Input, Box, Image } from "@chakra-ui/react";
 import { Table, Thead, Tbody, Tr, Th, Td, TableContainer,} from '@chakra-ui/react';
 import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalCloseButton, ModalFooter } from "@chakra-ui/react"
-
+import Lottie from "lottie-react";
+import animationData from './success.json';
 
 
 function Transfer({ setBalance, privateKey, cities, city, setRecipientImageUrl, recipientImageUrl, imageUrl,  }) {
@@ -191,9 +192,11 @@ function Transfer({ setBalance, privateKey, cities, city, setRecipientImageUrl, 
         ) : (
         <>
           <ModalHeader>Transaction complete!</ModalHeader>
-          <ModalBody>
-            <Box display="flex" flexDirection="row">
-              <video
+          <ModalBody height="400px">
+           
+            <Lottie animationData={animationData} loop={false} style={{ height: '200px' }}  />
+              
+            {/*  <video
                 autoPlay
                 muted
                 style={{ width: "100%", maxWidth: "400px" }}
@@ -201,8 +204,8 @@ function Transfer({ setBalance, privateKey, cities, city, setRecipientImageUrl, 
               >
                 <source src="../public/animation.webm" type="video/webm" />
               </video>
-            </Box>
-          </ModalBody>
+            */}
+           </ModalBody>
           <ModalFooter>
             <Button onClick={() => newRecipient(null, null)}>Great!</Button>
           </ModalFooter>

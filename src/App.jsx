@@ -67,11 +67,8 @@ function App() {
        
         {privateKey && city ? (
           <>
-          <Flex direction="row" width="100%" height="100%"
-          >
-            <Box w="52%"
-            backgroundImage={imageUrl}
-             >
+          <Flex direction={{ base: "column", md: "row" }} width="100%" height="100%">
+            <Box w={{ base: '100%', md: '52%' }} backgroundImage={imageUrl}>
             
             <Flex justifyContent="center" alignItems="center" height="100%">
             <Sender
@@ -89,8 +86,7 @@ function App() {
             />
             </Flex>
             </Box>
-            <Box w="48%"
-            backgroundImage={recipientImageUrl}>
+            <Box w={{ base: '100%', md: '48%' }} backgroundImage={recipientImageUrl}>
             <Flex justifyContent="center" alignItems="center" height="100%">
             <Transfer
               setBalance={setBalance}
@@ -116,7 +112,8 @@ function App() {
           />
            </Flex>
         ) : (
-          <Flex justifyContent="center" alignItems="center" height="100%">
+          <Flex direction={{ base: "column", md: "row" }} width="100%" height="100%">
+     
           <Intro />
           <Login
             setBalance={setBalance}
